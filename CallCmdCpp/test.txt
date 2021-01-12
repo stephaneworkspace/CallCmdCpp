@@ -1,0 +1,9 @@
+total 64
+-rw-rw-rw-   1 user     group        1302 Jan 12 20:38 CallCmdCpp.cpp
+-rw-rw-rw-   1 user     group       52858 Jan 12 20:28 CallCmdCpp.obj
+-rw-rw-rw-   1 user     group        7199 Jan 12 20:27 CallCmdCpp.vcxproj
+-rw-rw-rw-   1 user     group        1008 Jan 12 20:27 CallCmdCpp.vcxproj.filters
+-rw-rw-rw-   1 user     group         168 Jan 12 20:27 CallCmdCpp.vcxproj.user
+drwxrwxrwx   1 user     group           0 Jan 12 20:27 Debug
+drwxrwxrwx   1 user     group           0 Jan 12 20:38 Release
+-rw-rw-rw-   1 user     group           0 Jan 12 20:38 test.txt
