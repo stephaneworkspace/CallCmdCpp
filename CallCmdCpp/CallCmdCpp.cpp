@@ -218,9 +218,9 @@ char* SizeAllocatorTxt(int sizeTab)
 #include <atlbase.h>
 #include <atlconv.h>
 
-int bridge(mutable char** out_str); // REMOVE mutable if not nececarry -> OO onyl
+int bridge(char** out_str); // REMOVE mutable if not nececarry -> OO onyl
 
-int bridge(mutable char** out_str) {
+int bridge(char** out_str) {
     StdCapture std_capture;
     std_capture.BeginCapture();
 
@@ -269,7 +269,7 @@ int bridge(mutable char** out_str) {
     }
     //**out_str = &cstr; // DON'T WORK
     strcpy(*out_str, str.c_str());
-    printf("Address of out_str = %u\n", out_str);
+    //printf("Address of out_str = %u\n", out_str);
 
     delete[] cstr;
 
@@ -287,10 +287,8 @@ int bridge(mutable char** out_str) {
 
 int main()
 {
-    std::cout << "Hello World!\n";
     char* cstr_temp = NULL;
     bridge(&cstr_temp);
-    std::cout << "TEST" << std::endl;
     std::cout << cstr_temp << std::endl;
 }
 
