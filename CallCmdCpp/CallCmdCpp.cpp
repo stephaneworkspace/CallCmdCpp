@@ -1,5 +1,7 @@
 // CallCmdCpp.cpp : Ce fichier contient la fonction 'main'. L'exécution du programme commence et se termine à cet endroit.
 //
+// str_cpy unsafe
+#pragma warning(disable:4996)
 
 #include <iostream>
 
@@ -202,6 +204,63 @@ void _tmain(int argc, TCHAR * argv[])
 	// Close process and thread handles. 
 	CloseHandle(pi.hProcess);
 	CloseHandle(pi.hThread);
+}
+
+// CA2CT http://msdn.microsoft.com/en-us/library/87zae4a3%28VS.80%29.aspx
+#include <atlbase.h>
+#include <atlconv.h>
+
+int bridge(char* out_str);
+
+int bridge(char* out_str) {
+    StdCapture std_capture;
+    std_capture.BeginCapture();
+
+	STARTUPINFO si;
+	PROCESS_INFORMATION pi;
+
+	ZeroMemory(&si, sizeof(si));
+	si.cb = sizeof(si);
+	ZeroMemory(&pi, sizeof(pi));
+
+    const char *cmd = "ls -l";
+
+	// Start the child process. 
+	if (!CreateProcess(NULL,   // No module name (use command line)
+		CA2CT(cmd),        // Command line
+		NULL,           // Process handle not inheritable
+		NULL,           // Thread handle not inheritable
+		FALSE,          // Set handle inheritance to FALSE
+		0,              // No creation flags
+		NULL,           // Use parent's environment block
+		NULL,           // Use parent's starting directory 
+		&si,            // Pointer to STARTUPINFO structure
+		&pi)           // Pointer to PROCESS_INFORMATION structure
+		)
+	{
+		printf("CreateProcess failed (%d).\n", GetLastError());
+		return 1;
+	}
+
+	// Wait until child process exits.
+	WaitForSingleObject(pi.hProcess, INFINITE);
+    std_capture.EndCapture();
+
+    // const char* cstr = std_capture.GetCapture().c_str();
+    std::string str = std_capture.GetCapture();
+    char* cstr = new char[str.length() + 1];
+    strcpy(cstr, str.c_str());
+    // do stuff
+    *out_str = *cstr;
+    delete[] cstr;
+
+
+	// Close process and thread handles. 
+	CloseHandle(pi.hProcess);
+	CloseHandle(pi.hThread);
+
+    // TODO status code 0 or 1
+    return 0;
 }
 
 
