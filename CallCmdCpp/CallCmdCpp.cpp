@@ -157,7 +157,7 @@ private:
     bool m_init;
     std::string m_captured;
 };
-
+/*
 void _tmain(int argc, TCHAR * argv[])
 {
     StdCapture std_capture;
@@ -205,14 +205,22 @@ void _tmain(int argc, TCHAR * argv[])
 	CloseHandle(pi.hProcess);
 	CloseHandle(pi.hThread);
 }
+*/
+
+char* SizeAllocatorTxt(int sizeTab);
+
+char* SizeAllocatorTxt(int sizeTab)
+{
+    return (char*) malloc(sizeTab + 1); // sizeof(char) * // == 1
+}
 
 // CA2CT http://msdn.microsoft.com/en-us/library/87zae4a3%28VS.80%29.aspx
 #include <atlbase.h>
 #include <atlconv.h>
 
-int bridge(char* out_str);
+int bridge(mutable char** out_str); // REMOVE mutable if not nececarry -> OO onyl
 
-int bridge(char* out_str) {
+int bridge(mutable char** out_str) {
     StdCapture std_capture;
     std_capture.BeginCapture();
 
@@ -251,8 +259,21 @@ int bridge(char* out_str) {
     char* cstr = new char[str.length() + 1];
     strcpy(cstr, str.c_str());
     // do stuff
-    *out_str = *cstr;
+    int size = 255;
+    *out_str = SizeAllocatorTxt(str.length()); // TODO TEST DEBUGGER
+    if (*out_str == NULL)
+    {
+        std::cout << "Echec de l'allocation de memoire." << std::endl;
+        return 2;
+        // TODO EXIT PROGRAM
+    }
+    //**out_str = &cstr; // DON'T WORK
+    strcpy(*out_str, str.c_str());
+    printf("Address of out_str = %u\n", out_str);
+
     delete[] cstr;
+
+    //free(out_str); // au cas ou pour plus tard
 
 
 	// Close process and thread handles. 
@@ -264,11 +285,14 @@ int bridge(char* out_str) {
 }
 
 
-/*
 int main()
 {
     std::cout << "Hello World!\n";
-}*/
+    char* cstr_temp = NULL;
+    bridge(&cstr_temp);
+    std::cout << "TEST" << std::endl;
+    std::cout << cstr_temp << std::endl;
+}
 
 // Exécuter le programme : Ctrl+F5 ou menu Déboguer > Exécuter sans débogage
 // Déboguer le programme : F5 ou menu Déboguer > Démarrer le débogage
